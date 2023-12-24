@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Display</title>
+    <style type="text/css">
+        #app {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        label {
+            display: block;
+            background-color: #3498db;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button {
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        select {
+            width: 30%;
+            padding: 8px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <input type="file" id="jsonFileInput" accept=".json">
+        <button onclick="loadJson()">Load JSON</button>
+        <br>
+        <select id="displayOptions" multiple></select>
+        <select id="selectedOptions" multiple></select>
+        <br>
+        <button onclick="moveToSelected()">>></button>
+        <button onclick="moveToAvailable()"><<</button>
+        <br>
+        <button onclick="displayData()">Display Data</button>
+        <table id="dataTable"></table>
+    </div>
+
+    <script>
+
+        let jsonData = null;
+        let availableFields = [];
+        let selectedFields = [];
+
+        function loadJson() {
+            const fileInput = document.getElementById('jsonFileInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    try {
+                        const parsedData = JSON.parse(e.target.result);
+                        if (parsedData && parsedData.products) {
+                            jsonData = Object.values(parsedData.products);
+                            availableFields = Object.keys(jsonData[0]);
+                            selectedFields = []; 
+                            updateDisplayOptions();
+                        } else {
+                            console.error('Invalid JSON structure.');
+                        }
+                    } catch (error) {
+                        console.error('Error parsing JSON file:', error);
+                    }
+                };
+
+                reader.readAsText(file);
+            }
+        }
+
+        function updateDisplayOptions() {
+            const displayOptions = document.getElementById('displayOptions');
+            const selectedOptions = document.getElementById('selectedOptions');
+
+            displayOptions.innerHTML = '';
+            selectedOptions.innerHTML = '';
+
+            for (const field of availableFields) {
+                const option = document.createElement('option');
+                option.value = field;
+                option.textContent = field;
+                displayOptions.appendChild(option);
+            }
+
+            for (const field of selectedFields) {
+                const option = document.createElement('option');
+                option.value = field;
+                option.textContent = field;
+                selectedOptions.appendChild(option);
+            }
+        }
+
+        function moveToSelected() {
+            const displayOptions = document.getElementById('displayOptions');
+            const selectedOptions = document.getElementById('selectedOptions');
+
+            moveOptions(displayOptions, selectedOptions, availableFields, selectedFields);
+        }
+
+        function moveToAvailable() {
+            const displayOptions = document.getElementById('displayOptions');
+            const selectedOptions = document.getElementById('selectedOptions');
+
+            moveOptions(selectedOptions, displayOptions, selectedFields, availableFields);
+        }
+
+        function moveOptions(source, destination, sourceArray, destinationArray) {
+            const selectedOptions = source.selectedOptions;
+
+            for (const option of selectedOptions) {
+                const index = sourceArray.indexOf(option.value);
+                if (index !== -1) {
+                    sourceArray.splice(index, 1);
+                }
+            }
+
+            const movedOptions = Array.from(selectedOptions).map(option => option.value);
+            destinationArray.push(...movedOptions);
+
+            updateDisplayOptions();
+        }
+
+        function displayData() {
+            const dataTable = document.getElementById('dataTable');
+            dataTable.innerHTML = '';
+
+            const sortedData = jsonData.sort((a, b) => b.Popularity - a.Popularity);
+
+            const tableHeader = document.createElement('tr');
+            for (const field of selectedFields) {
+                const th = document.createElement('th');
+                th.textContent = field;
+                tableHeader.appendChild(th);
+            }
+            dataTable.appendChild(tableHeader);
+
+            for (const product of sortedData) {
+                const tr = document.createElement('tr');
+                for (const field of selectedFields) {
+                    const td = document.createElement('td');
+                    td.textContent = product[field];
+                    tr.appendChild(td);
+                }
+                dataTable.appendChild(tr);
+            }
+        }
+    </script>
+</body>
+</html>

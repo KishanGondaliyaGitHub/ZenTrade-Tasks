@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Template</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        .box {
+            background-color: #3498db;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            transition: background-color 0.3s ease; /* Add smooth background color transition */
+            cursor: pointer;
+        }
+
+        .box:hover {
+            background-color: #2980b9; /* Darker shade on hover */
+        }
+
+        .graph-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        canvas {
+            margin-top: 20px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>Company Metrics</h2>
+
+        <div class="graph-container">
+            <!-- Total Revenue Box -->
+            <div class="box">
+                <h3>Total Revenue</h3>
+                <p>$500,000</p>
+            </div>
+
+            <!-- Total Jobs Avg Box -->
+            <div class="box">
+                <h3>Total Jobs Avg</h3>
+                <p>50</p>
+            </div>
+
+            <!-- Tickets Created Box -->
+            <div class="box">
+                <h3>Tickets Created</h3>
+                <p>100</p>
+            </div>
+        </div>
+
+        <div class="graph-container">
+            <!-- Tickets Scheduled Box -->
+            <div class="box">
+                <h3>Tickets Scheduled</h3>
+                <p>80</p>
+            </div>
+
+            <!-- Outstanding Amount Box -->
+            <div class="box">
+                <h3>Outstanding Amount</h3>
+                <p>$20,000</p>
+            </div>
+
+            <!-- Membership Sold Box -->
+            <div class="box">
+                <h3>Membership Sold</h3>
+                <p>30</p>
+            </div>
+        </div>
+
+        <div class="graph-container">
+            <!-- Jobs Completed Box -->
+            <div class="box">
+                <h3>Jobs Completed</h3>
+                <p>90</p>
+            </div>
+
+            <!-- Total Canceled Box -->
+            <div class="box">
+                <h3>Total Canceled</h3>
+                <p>10</p>
+            </div>
+        </div>
+
+        <!-- Graphs -->
+        <div>
+            <h2>Graphs</h2>
+            <canvas id="revenueByLocationChart"></canvas>
+            <canvas id="revenueByJobTypeChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Dummy data
+            const revenueByLocationData = {
+                labels: ['New York', 'London', 'San Francisco', 'Tokyo', 'Berlin'],
+                datasets: [{
+                    label: 'Revenue',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    data: [150000, 120000, 180000, 90000, 130000]
+                }]
+            };
+
+            const revenueByJobTypeData = {
+                labels: ['Design', 'Development', 'Marketing', 'Support', 'Sales'],
+                datasets: [{
+                    label: 'Revenue',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    data: [80000, 120000, 90000, 60000, 75000]
+                }]
+            };
+
+            // Create Revenue by Job Location chart
+            const revenueByLocationChartContext = document.getElementById('revenueByLocationChart').getContext('2d');
+            new Chart(revenueByLocationChartContext, {
+                type: 'bar',
+                data: revenueByLocationData,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Create Revenue by Job Type chart
+            const revenueByJobTypeChartContext = document.getElementById('revenueByJobTypeChart').getContext('2d');
+            new Chart(revenueByJobTypeChartContext, {
+                type: 'bar',
+                data: revenueByJobTypeData,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
